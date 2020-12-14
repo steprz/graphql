@@ -136,7 +136,8 @@ var QueryDocumentKeys = KeyMap{
 		"Fields",
 	},
 
-	"TypeExtensionDefinition": []string{"Definition"},
+	"TypeExtensionDefinition":      []string{"Definition"},
+	"InterfaceExtensionDefinition": []string{"Definition"},
 
 	"DirectiveDefinition": []string{"Name", "Arguments", "Locations"},
 }

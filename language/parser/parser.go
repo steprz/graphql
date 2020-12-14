@@ -36,7 +36,7 @@ func init() {
 		tokenDefinitionFn[lexer.UNION] = parseUnionTypeDefinition
 		tokenDefinitionFn[lexer.ENUM] = parseEnumTypeDefinition
 		tokenDefinitionFn[lexer.INPUT] = parseInputObjectTypeDefinition
-		tokenDefinitionFn[lexer.EXTEND] = parseTypeExtensionDefinition
+		tokenDefinitionFn[lexer.EXTEND] = parseExtensionDefinition
 		tokenDefinitionFn[lexer.DIRECTIVE] = parseDirectiveDefinition
 	}
 }
@@ -1365,15 +1365,32 @@ func parseInputObjectTypeDefinition(parser *Parser) (ast.Node, error) {
 }
 
 /**
- * TypeExtensionDefinition : extend ObjectTypeDefinition
+ * TypeDefinition :
+ *   - extend ObjectTypeDefinition
+ *   - extend InterfaceTypeDefinition
  */
-func parseTypeExtensionDefinition(parser *Parser) (ast.Node, error) {
+func parseExtensionDefinition(parser *Parser) (ast.Node, error) {
 	start := parser.Token.Start
 	_, err := expectKeyWord(parser, lexer.EXTEND)
 	if err != nil {
 		return nil, err
 	}
+	if parser.Token.Kind == lexer.NAME {
+		switch parser.Token.Value {
+		case lexer.INTERFACE:
+			return parseInterfaceExtensionDefinition(parser, start)
+		case lexer.TYPE:
+			return parseTypeExtensionDefinition(parser, start)
+			//return parseTypeSystemExtensionDefinition(parser, start, parseObjectTypeDefinition)
+		}
+	}
+	return nil, unexpected(parser, lexer.Token{})
+}
 
+/**
+ * TypeExtensionDefinition : ObjectTypeDefinition
+ */
+func parseTypeExtensionDefinition(parser *Parser, start int) (ast.Node, error) {
 	definition, err := parseObjectTypeDefinition(parser)
 	if err != nil {
 		return nil, err
@@ -1381,6 +1398,20 @@ func parseTypeExtensionDefinition(parser *Parser) (ast.Node, error) {
 	return ast.NewTypeExtensionDefinition(&ast.TypeExtensionDefinition{
 		Loc:        loc(parser, start),
 		Definition: definition.(*ast.ObjectDefinition),
+	}), nil
+}
+
+/**
+ * InterfaceExtensionDefinition : InterfaceTypeDefinition
+ */
+func parseInterfaceExtensionDefinition(parser *Parser, start int) (ast.Node, error) {
+	definition, err := parseInterfaceTypeDefinition(parser)
+	if err != nil {
+		return nil, err
+	}
+	return ast.NewInterfaceExtensionDefinition(&ast.InterfaceExtensionDefinition{
+		Loc:        loc(parser, start),
+		Definition: definition.(*ast.InterfaceDefinition),
 	}), nil
 }
 

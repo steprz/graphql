@@ -121,6 +121,53 @@ extend type Hello {
 	}
 }
 
+func TestSchemaParser_SimpleInterfaceExtension(t *testing.T) {
+
+	body := `
+extend interface Hello {
+  world: String
+}`
+	astDoc := parse(t, body)
+
+	expected := ast.NewDocument(&ast.Document{
+		Loc: testLoc(1, 43),
+		Definitions: []ast.Node{
+			ast.NewInterfaceExtensionDefinition(&ast.InterfaceExtensionDefinition{
+				Loc: testLoc(1, 43),
+				Definition: ast.NewInterfaceDefinition(&ast.InterfaceDefinition{
+					Loc: testLoc(8, 43),
+					Name: ast.NewName(&ast.Name{
+						Value: "Hello",
+						Loc:   testLoc(18, 23),
+					}),
+					Directives: []*ast.Directive{},
+					Fields: []*ast.FieldDefinition{
+						ast.NewFieldDefinition(&ast.FieldDefinition{
+							Loc: testLoc(28, 41),
+							Name: ast.NewName(&ast.Name{
+								Value: "world",
+								Loc:   testLoc(28, 33),
+							}),
+							Directives: []*ast.Directive{},
+							Arguments:  []*ast.InputValueDefinition{},
+							Type: ast.NewNamed(&ast.Named{
+								Loc: testLoc(35, 41),
+								Name: ast.NewName(&ast.Name{
+									Value: "String",
+									Loc:   testLoc(35, 41),
+								}),
+							}),
+						}),
+					},
+				}),
+			}),
+		},
+	})
+	if !reflect.DeepEqual(astDoc, expected) {
+		t.Fatalf("unexpected document, expected: %v, got: %v", expected, astDoc)
+	}
+}
+
 func TestSchemaParser_SimpleNonNullType(t *testing.T) {
 
 	body := `

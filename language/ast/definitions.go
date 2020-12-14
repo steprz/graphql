@@ -16,6 +16,8 @@ type Definition interface {
 var _ Definition = (*OperationDefinition)(nil)
 var _ Definition = (*FragmentDefinition)(nil)
 var _ Definition = (TypeSystemDefinition)(nil) // experimental non-spec addition.
+var _ Definition = (*TypeExtensionDefinition)(nil)
+var _ Definition = (*InterfaceExtensionDefinition)(nil)
 
 // Note: subscription is an experimental non-spec addition.
 const (
@@ -183,6 +185,44 @@ func (def *TypeExtensionDefinition) GetSelectionSet() *SelectionSet {
 }
 
 func (def *TypeExtensionDefinition) GetOperation() string {
+	return ""
+}
+
+// InterfaceExtensionDefinition implements Node, Definition
+type InterfaceExtensionDefinition struct {
+	Kind       string
+	Loc        *Location
+	Definition *InterfaceDefinition
+}
+
+func NewInterfaceExtensionDefinition(def *InterfaceExtensionDefinition) *InterfaceExtensionDefinition {
+	if def == nil {
+		def = &InterfaceExtensionDefinition{}
+	}
+	return &InterfaceExtensionDefinition{
+		Kind:       kinds.InterfaceExtensionDefinition,
+		Loc:        def.Loc,
+		Definition: def.Definition,
+	}
+}
+
+func (def *InterfaceExtensionDefinition) GetKind() string {
+	return def.Kind
+}
+
+func (def *InterfaceExtensionDefinition) GetLoc() *Location {
+	return def.Loc
+}
+
+func (def *InterfaceExtensionDefinition) GetVariableDefinitions() []*VariableDefinition {
+	return []*VariableDefinition{}
+}
+
+func (def *InterfaceExtensionDefinition) GetSelectionSet() *SelectionSet {
+	return &SelectionSet{}
+}
+
+func (def *InterfaceExtensionDefinition) GetOperation() string {
 	return ""
 }
 
