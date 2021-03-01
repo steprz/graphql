@@ -36,6 +36,15 @@ func TestValidate_ProvidedNonNullArguments_ValidNonNullableValue_NoArgOnOptional
         }
     `)
 }
+func TestValidate_ProvidedNonNullArguments_ValidNonNullableValue_ArgOnOptionalNonNullArg(t *testing.T) {
+	testutil.ExpectPassesRule(t, graphql.ProvidedNonNullArgumentsRule, `
+        {
+          dog {
+            isHousetrained(atDoggieDayCare: true)
+          }
+        }
+    `)
+}
 func TestValidate_ProvidedNonNullArguments_ValidNonNullableValue_MultipleArgs(t *testing.T) {
 	testutil.ExpectPassesRule(t, graphql.ProvidedNonNullArgumentsRule, `
         {

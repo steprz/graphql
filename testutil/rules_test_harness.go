@@ -108,6 +108,10 @@ func init() {
 						Type:         graphql.Boolean,
 						DefaultValue: true,
 					},
+					"atDoggieDayCare": &graphql.ArgumentConfig{
+						Type:         graphql.NewNonNull(graphql.Boolean),
+						DefaultValue: true,
+					},
 				},
 			},
 			"isAtLocation": &graphql.Field{
